@@ -24,14 +24,19 @@ class UI extends Canvas2D {
 		const ctx = this._ctx
 
 		ctx.clearRect(0, 0, this._width, this._height)
+		ctx.font = '14px monospace'
 		ctx.fillStyle = '#fff'
-		ctx.font = '16px monospace'
+		ctx.strokeStyle = '#fff'
+		ctx.lineWidth = 2
 
-		this._drawMultilineText(40, 40, 20, [
+		ctx.save()
+		ctx.translate(20, 20)
+
+		this._drawMultilineText(0, 0, 14, [
 			'ANALYSIS: MATCH:',
 			'****************'
 		])
-		this._drawMultilineText(40, 80, 20, this._analysisRows)
+		this._drawMultilineText(0, 28, 20, this._analysisRows)
 
 		if (time % 10 === 0) {
 			const row = `${getRandString(3)} ${getRandString(5, 36)} ${getRandString(6)}`
@@ -43,8 +48,10 @@ class UI extends Canvas2D {
 		}
 
 		ctx.textAlign = 'end'
-		ctx.fillText('MISSION: KILL ALL HUMANS', this._width - 20, 40)
+		ctx.fillText('MISSION: KILL ALL HUMANS', this._width - 40, 0)
 		ctx.textAlign = 'start'
+
+		ctx.restore()
 	}
 
 	drawRects (rects) {
@@ -53,8 +60,6 @@ class UI extends Canvas2D {
 		const height = this._height
 
 		ctx.save()
-		ctx.strokeStyle = '#fff'
-		ctx.lineWidth = 3
 
 		rects.forEach(rect => {
 			const x = rect.x * width
@@ -63,29 +68,31 @@ class UI extends Canvas2D {
 			const h = rect.height * height
 
 			ctx.strokeRect(x, y, w, h)
-			ctx.fillText('MEATBAG DETECTED', x, y - 20)
+			ctx.fillText('MEATBAG DETECTED', x, y - 14)
 		})
 
 		ctx.restore()
 	}
 
 	drawHistogram (arr) {
-		if (!arr || arr.lenght == 0) {
+		if (!arr || arr.length === 0) {
 			return
 		}
 
 		const ctx = this._ctx
 		const width = this._width
 		const height = this._height
+		const scaleX = width * 0.5 / arr.length
+		const scaleY = height * .3 * (1 / 255)
 
 		ctx.save()
-		ctx.strokeStyle = '#fff'
-		ctx.lineWidth = 3
+		ctx.translate(20, height - 20)
+		ctx.scale(scaleX, -scaleY)
 		ctx.beginPath()
-		ctx.moveTo(40, height - 40 - arr[0])
+		ctx.moveTo(0, arr[0])
 
 		arr.forEach((n, i) => {
-			ctx.lineTo(40 + i * 10, height - 40 - n)
+			ctx.lineTo(i, n)
 		})
 
 		ctx.stroke()

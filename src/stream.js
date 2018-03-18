@@ -48,14 +48,14 @@ class Stream {
 
 			this._video.srcObject = stream
 		} catch (e) {
-			if (error.name === 'ConstraintNotSatisfiedError') {
+			if (e.name === 'ConstraintNotSatisfiedError') {
 				console.log(`
 					The resolution 
 					${constraints.video.width.exact}x${constraints.video.width.exact} px 
 					is not supported by your device.
 				`)
 			} else
-			if (error.name === 'PermissionDeniedError') {
+			if (e.name === 'PermissionDeniedError') {
 				console.log(`
 					Permissions have not been granted to use your camera and 
 					microphone, you need to allow the page access to your devices in 
@@ -63,8 +63,8 @@ class Stream {
 				`)
 			}
 
-			console.log(`getUserMedia error: ${error.name}`)
-			console.log(error)
+			console.log(`getUserMedia error: ${e.name}`)
+			console.log(e)
 		}
 	}
 

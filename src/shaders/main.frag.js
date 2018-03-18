@@ -24,14 +24,16 @@ export default `
 	}
 
 	vec4 getUIColor (sampler2D texture, vec2 uv) {
+		float time = sin(u_time) * 3.0;
+
 		// Получение цвета
 		vec4 color = texture2D(texture, uv);
 
 		// Получение зелёного канала
-		color.g = texture2D(texture, uv + vec2((sin(u_time) * 3.0 / u_resolution.x), 0.0)).g;
+		color.g = texture2D(texture, uv + vec2(time / u_resolution.x, 0.0)).g;
 
 		// Получение синего канала
-		color.b = texture2D(texture, uv + vec2(0.0, (sin(u_time) * 3.0 / u_resolution.y))).b;
+		color.b = texture2D(texture, uv + vec2(0.0, time / u_resolution.y)).b;
 
 		return color;
 	}

@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
 	entry: ['babel-polyfill', './src/app.js'],
@@ -24,5 +25,11 @@ module.exports = {
 				}
 			}
 		]
-	}
+	},
+	plugins: [
+		new webpack.optimize.UglifyJsPlugin({
+			include: /^bundle\.js$/,
+			minimize: true
+		})
+	]
 }
