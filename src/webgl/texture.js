@@ -24,6 +24,13 @@ class Texture extends WebGLApi {
 		this._data = texture
 	}
 
+	setImage (value) {
+		const gl = this._gl
+
+		gl.bindTexture(gl.TEXTURE_2D, this._data)
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, value)
+	}
+
 	bind (unit = null) {
 		const gl = this._gl
 
@@ -34,13 +41,6 @@ class Texture extends WebGLApi {
 		gl.bindTexture(gl.TEXTURE_2D, this._data)
 
 		return unit
-	}
-
-	setImage (value) {
-		const gl = this._gl
-
-		gl.bindTexture(gl.TEXTURE_2D, this._data)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, value)
 	}
 
 	get data () {

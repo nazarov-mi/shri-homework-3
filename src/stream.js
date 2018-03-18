@@ -1,7 +1,11 @@
 
 if (!navigator.getUserMedia) {
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-	navigator.mozGetUserMedia || navigator.msGetUserMedia;
+		navigator.mozGetUserMedia || navigator.msGetUserMedia
+}
+
+if (!window.URL) {
+	window.URL = window.URL || window.webkitURL || window.msURL || window.oURL
 }
 
 class Stream {

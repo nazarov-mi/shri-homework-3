@@ -74,7 +74,6 @@ export default `
 	}
 
 	void main () {
-
 		vec2 uv = v_uv;
 
 		uv = noise(uv);

@@ -1,23 +1,15 @@
 
 import Canvas2D from './canvas-2d'
 
+function getRandString (len, notation = 10) {
+	return Math.random().toString(notation).slice(2, 2 + len)
+}
+
 class UI extends Canvas2D {
 	constructor (width, height) {
 		super(width, height)
 
 		this._analysisRows = []
-	}
-
-	_randNumber (len) {
-		return Math.random().toString().substr(2, len)
-	}
-
-	_randHash (len) {
-		return Math.random().toString(36).substr(2, len)
-	}
-
-	_randRow () {
-		return `${this._randNumber(3)} ${this._randHash(5)} ${this._randNumber(5)}`
 	}
 
 	_drawMultilineText (x, y, lineHeight, rows) {
@@ -33,7 +25,7 @@ class UI extends Canvas2D {
 
 		ctx.clearRect(0, 0, this._width, this._height)
 		ctx.fillStyle = '#fff'
-		ctx.font = '24px monospace'
+		ctx.font = '16px monospace'
 
 		this._drawMultilineText(40, 40, 20, [
 			'ANALYSIS: MATCH:',
@@ -42,15 +34,16 @@ class UI extends Canvas2D {
 		this._drawMultilineText(40, 80, 20, this._analysisRows)
 
 		if (time % 10 === 0) {
-			this._analysisRows.unshift(this._randRow())
+			const row = `${getRandString(3)} ${getRandString(5, 36)} ${getRandString(6)}`
+			this._analysisRows.unshift(row)
 
-			if (this._analysisRows.length > 15) {
+			if (this._analysisRows.length > 10) {
 				this._analysisRows.pop()
 			}
 		}
 
 		ctx.textAlign = 'end'
-		ctx.fillText('KILL ALL HUMANS', this._width - 20, 40)
+		ctx.fillText('MISSION: KILL ALL HUMANS', this._width - 20, 40)
 		ctx.textAlign = 'start'
 	}
 
@@ -70,7 +63,7 @@ class UI extends Canvas2D {
 			const h = rect.height * height
 
 			ctx.strokeRect(x, y, w, h)
-			ctx.fillText('HUMAN DETECTED', x, y - 20)
+			ctx.fillText('MEATBAG DETECTED', x, y - 20)
 		})
 
 		ctx.restore()

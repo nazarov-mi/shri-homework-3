@@ -54,10 +54,6 @@ class Shader extends WebGLApi {
 		this._data = program
 	}
 
-	bind () {
-		this._gl.useProgram(this._data)
-	}
-
 	getUniformLocation (name) {
 		const uniforms = this._uniforms
 
@@ -66,6 +62,59 @@ class Shader extends WebGLApi {
 		}
 
 		return uniforms[name]
+	}
+
+	bind () {
+		this._gl.useProgram(this._data)
+	}
+
+	bindUniform (...args) {
+		if (args.length < 3) {
+			throw new Error('Недостаточно аргументов')
+		}
+
+		const type = args.shift()
+		const name = args.shift()
+
+		const methodName = `uniform${type}`
+		const method = this._gl[methodName]
+
+		if (!method) {
+			throw new Error(`Метод ${methodName} не найден`)
+		}
+
+		const location = this.getUniformLocation(name)
+
+		if (!location) {
+			throw new Error(`Переменная ${name} не определена в шейдере`)
+		}
+
+		const gl = this._gl
+		const argsLen = args.length
+
+		switch (argsLen) {
+			case 1:
+				method.call(gl, location, args[0])
+				break
+
+			case 2:
+				method.call(gl, location, args[0], args[1])
+				break
+
+			case 3:
+				method.call(gl, location, args[0], args[1], args[2])
+				break
+
+			case 4:
+				method.call(gl, location, args[0], args[1], args[2], args[3])
+				break
+
+			default:
+				method.apply(gl, [
+					location,
+					...args
+				])
+		}
 	}
 
 	get data () {

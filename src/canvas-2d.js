@@ -8,6 +8,14 @@ class Canvas2D extends Canvas {
 		this._ctx = this._el.getContext('2d')
 	}
 
+	clear () {
+		this._ctx.clearRect(0, 0, this._width, this._height)
+	}
+
+	drawImage (data) {
+		this._ctx.drawImage(data, 0, 0, this._width, this._height)
+	}
+
 	get ctx () {
 		return this._ctx
 	}
