@@ -48,7 +48,7 @@ export default `
 
 	// Функция для сдвига uv координат для пиксилизации
 
-	#define PIXELATE_DELAY 400.0
+	#define PIXELATE_DELAY 700.0
 	#define PIXELATE_DURATION 30.0
 
 	vec2 pixelate (vec2 uv) {
@@ -61,7 +61,7 @@ export default `
 
 	// Функция для смещения uv координат для создания шума
 
-	#define NOISE_DELAY 200.0
+	#define NOISE_DELAY 300.0
 	#define NOISE_DURATION 80.0
 
 	vec2 noise (vec2 uv) {

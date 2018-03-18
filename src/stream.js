@@ -4,15 +4,9 @@ if (!navigator.getUserMedia) {
 		navigator.mozGetUserMedia || navigator.msGetUserMedia
 }
 
-if (!window.URL) {
-	window.URL = window.URL || window.webkitURL || window.msURL || window.oURL
-}
-
 class Stream {
-	constructor (video, width, height) {
+	constructor (video) {
 		this._video = video
-		this._width = width
-		this._height = height
 		this._data = null
 		this._stream = null
 		this._audioContext = null
@@ -28,10 +22,7 @@ class Stream {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
 				audio: true,
-				video: {
-					width: this._width,
-					height: this._height
-				}
+				video: true
 			})
 
 			const audioContext = new AudioContext()

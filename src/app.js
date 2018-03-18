@@ -19,7 +19,7 @@ class App {
 		this._tracker = null
 		this._track = null
 		this._facesRects = []
-		this._smEdge = 260
+		this._smEdge = 320
 		this._mdEdge = 800
 
 		this._aspectRatio = 1
@@ -38,7 +38,7 @@ class App {
 		this._video = this._createVideo()
 		this._videoCanvasSm = new Canvas2D(this._smWidth, this._smHeight)
 		this._videoCanvasMd = new Canvas2D(this._mdWidth, this._mdHeight)
-		this._stream = new Stream(this._video, this._mdWidth, this._mdHeight)
+		this._stream = new Stream(this._video)
 
 		this._mainTexture = this.createTexture()
 		this._uiTexture = this.createTexture()

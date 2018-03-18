@@ -9237,7 +9237,7 @@ var App = function () {
 		this._tracker = null;
 		this._track = null;
 		this._facesRects = [];
-		this._smEdge = 260;
+		this._smEdge = 320;
 		this._mdEdge = 800;
 
 		this._aspectRatio = 1;
@@ -9256,7 +9256,7 @@ var App = function () {
 		this._video = this._createVideo();
 		this._videoCanvasSm = new _canvas2d2.default(this._smWidth, this._smHeight);
 		this._videoCanvasMd = new _canvas2d2.default(this._mdWidth, this._mdHeight);
-		this._stream = new _stream2.default(this._video, this._mdWidth, this._mdHeight);
+		this._stream = new _stream2.default(this._video);
 
 		this._mainTexture = this.createTexture();
 		this._uiTexture = this.createTexture();
@@ -9665,17 +9665,11 @@ if (!navigator.getUserMedia) {
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 }
 
-if (!window.URL) {
-	window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
-}
-
 var Stream = function () {
-	function Stream(video, width, height) {
+	function Stream(video) {
 		_classCallCheck(this, Stream);
 
 		this._video = video;
-		this._width = width;
-		this._height = height;
 		this._data = null;
 		this._stream = null;
 		this._audioContext = null;
@@ -9702,10 +9696,7 @@ var Stream = function () {
 								_context.next = 3;
 								return navigator.mediaDevices.getUserMedia({
 									audio: true,
-									video: {
-										width: this._width,
-										height: this._height
-									}
+									video: true
 								});
 
 							case 3:
@@ -10066,7 +10057,7 @@ exports.default = "\n\tattribute vec2 a_position;\n\tvarying vec2 v_uv;\n\n\tvoi
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.default = "\n\tprecision highp float;\n\tuniform sampler2D u_textureA;\n\tuniform sampler2D u_textureB;\n\tuniform float u_time;\n\tuniform vec2 u_resolution;\n\tvarying vec2 v_uv;\n\n\t#define M_PI 3.1415926535897932384626433832795\n\n\tvec4 getMainColor (sampler2D texture, vec2 uv) {\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0446\u0432\u0435\u0442\u0430\n\t\tvec4 color = texture2D(texture, uv);\n\n\t\t// \u041D\u0430\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u043E\u0441\n\t\tcolor.rgb += sin(uv.y * u_resolution.y) * 0.05;\n\n\t\t// \u041D\u0430\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043A\u0440\u0430\u0441\u0441\u043D\u043E\u0433\u043E \u0446\u0432\u0435\u0442\u0430\n\t\tfloat red = clamp(color.r * 2.0 - 0.5, 0.0, 1.0);\n\t\tcolor.rgba = vec4(red, 0.2, 0.3, 1.0);\n\n\t\treturn color;\n\t}\n\n\tvec4 getUIColor (sampler2D texture, vec2 uv) {\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0446\u0432\u0435\u0442\u0430\n\t\tvec4 color = texture2D(texture, uv);\n\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0437\u0435\u043B\u0451\u043D\u043E\u0433\u043E \u043A\u0430\u043D\u0430\u043B\u0430\n\t\tcolor.g = texture2D(texture, uv + vec2((sin(u_time) * 3.0 / u_resolution.x), 0.0)).g;\n\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0441\u0438\u043D\u0435\u0433\u043E \u043A\u0430\u043D\u0430\u043B\u0430\n\t\tcolor.b = texture2D(texture, uv + vec2(0.0, (sin(u_time) * 3.0 / u_resolution.y))).b;\n\n\t\treturn color;\n\t}\n\n\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u0442\u043A\u0430 \u043E\u0442 \u0434\u0435\u043B\u0435\u043D\u0438\u044F\n\tfloat fraction (float a, float b) {\n\t\treturn ((a / b) - floor(a / b)) * b;\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0442\u0430\u0439\u043C\u0435\u0440\u0430\n\tfloat timer (float delay, float duration) {\n\t\treturn min(fraction(u_time, delay + duration), duration);\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043B\u044F \u0441\u0434\u0432\u0438\u0433\u0430 uv \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442 \u0434\u043B\u044F \u043F\u0438\u043A\u0441\u0438\u043B\u0438\u0437\u0430\u0446\u0438\u0438\n\n\t#define PIXELATE_DELAY 400.0\n\t#define PIXELATE_DURATION 30.0\n\n\tvec2 pixelate (vec2 uv) {\n\t\tfloat time = timer(PIXELATE_DELAY, PIXELATE_DURATION) / PIXELATE_DURATION;\n\t\ttime = 1.0 - abs(sin(time * M_PI));\n\t\tvec2 size = u_resolution * time;\n\n\t\treturn floor(uv * size) / size;\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043B\u044F \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u044F uv \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442 \u0434\u043B\u044F \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0448\u0443\u043C\u0430\n\n\t#define NOISE_DELAY 200.0\n\t#define NOISE_DURATION 80.0\n\n\tvec2 noise (vec2 uv) {\n\t\tfloat time = NOISE_DURATION - timer(NOISE_DELAY, NOISE_DURATION);\n\t\tvec2 offset = uv * u_resolution;\n\n\t\toffset.x += floor(sin(offset.y / 5.0 * time + time * time)) * 0.5 * time;\n\n\t\treturn offset / u_resolution;\n\t}\n\n\tvoid main () {\n\t\tvec2 uv = v_uv;\n\n\t\tuv = noise(uv);\n\t\tuv = pixelate(uv);\n\n\t\tvec4 colorA = getMainColor(u_textureA, uv);\n\t\tvec4 colorB = getUIColor(u_textureB, uv);\n\n\t\tvec4 color = mix(colorA, colorB, 0.5);\n\n\t\t// \u0412\u044B\u0445\u043E\u0434\n\t\tgl_FragColor = color;\n\t}\n";
+exports.default = "\n\tprecision highp float;\n\tuniform sampler2D u_textureA;\n\tuniform sampler2D u_textureB;\n\tuniform float u_time;\n\tuniform vec2 u_resolution;\n\tvarying vec2 v_uv;\n\n\t#define M_PI 3.1415926535897932384626433832795\n\n\tvec4 getMainColor (sampler2D texture, vec2 uv) {\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0446\u0432\u0435\u0442\u0430\n\t\tvec4 color = texture2D(texture, uv);\n\n\t\t// \u041D\u0430\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u043E\u0441\n\t\tcolor.rgb += sin(uv.y * u_resolution.y) * 0.05;\n\n\t\t// \u041D\u0430\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u043A\u0440\u0430\u0441\u0441\u043D\u043E\u0433\u043E \u0446\u0432\u0435\u0442\u0430\n\t\tfloat red = clamp(color.r * 2.0 - 0.5, 0.0, 1.0);\n\t\tcolor.rgba = vec4(red, 0.2, 0.3, 1.0);\n\n\t\treturn color;\n\t}\n\n\tvec4 getUIColor (sampler2D texture, vec2 uv) {\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0446\u0432\u0435\u0442\u0430\n\t\tvec4 color = texture2D(texture, uv);\n\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0437\u0435\u043B\u0451\u043D\u043E\u0433\u043E \u043A\u0430\u043D\u0430\u043B\u0430\n\t\tcolor.g = texture2D(texture, uv + vec2((sin(u_time) * 3.0 / u_resolution.x), 0.0)).g;\n\n\t\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0441\u0438\u043D\u0435\u0433\u043E \u043A\u0430\u043D\u0430\u043B\u0430\n\t\tcolor.b = texture2D(texture, uv + vec2(0.0, (sin(u_time) * 3.0 / u_resolution.y))).b;\n\n\t\treturn color;\n\t}\n\n\t// \u041F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u0442\u043A\u0430 \u043E\u0442 \u0434\u0435\u043B\u0435\u043D\u0438\u044F\n\tfloat fraction (float a, float b) {\n\t\treturn ((a / b) - floor(a / b)) * b;\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0442\u0430\u0439\u043C\u0435\u0440\u0430\n\tfloat timer (float delay, float duration) {\n\t\treturn min(fraction(u_time, delay + duration), duration);\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043B\u044F \u0441\u0434\u0432\u0438\u0433\u0430 uv \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442 \u0434\u043B\u044F \u043F\u0438\u043A\u0441\u0438\u043B\u0438\u0437\u0430\u0446\u0438\u0438\n\n\t#define PIXELATE_DELAY 700.0\n\t#define PIXELATE_DURATION 30.0\n\n\tvec2 pixelate (vec2 uv) {\n\t\tfloat time = timer(PIXELATE_DELAY, PIXELATE_DURATION) / PIXELATE_DURATION;\n\t\ttime = 1.0 - abs(sin(time * M_PI));\n\t\tvec2 size = u_resolution * time;\n\n\t\treturn floor(uv * size) / size;\n\t}\n\n\t// \u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043B\u044F \u0441\u043C\u0435\u0449\u0435\u043D\u0438\u044F uv \u043A\u043E\u043E\u0440\u0434\u0438\u043D\u0430\u0442 \u0434\u043B\u044F \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0448\u0443\u043C\u0430\n\n\t#define NOISE_DELAY 300.0\n\t#define NOISE_DURATION 80.0\n\n\tvec2 noise (vec2 uv) {\n\t\tfloat time = NOISE_DURATION - timer(NOISE_DELAY, NOISE_DURATION);\n\t\tvec2 offset = uv * u_resolution;\n\n\t\toffset.x += floor(sin(offset.y / 5.0 * time + time * time)) * 0.5 * time;\n\n\t\treturn offset / u_resolution;\n\t}\n\n\tvoid main () {\n\t\tvec2 uv = v_uv;\n\n\t\tuv = noise(uv);\n\t\tuv = pixelate(uv);\n\n\t\tvec4 colorA = getMainColor(u_textureA, uv);\n\t\tvec4 colorB = getUIColor(u_textureB, uv);\n\n\t\tvec4 color = mix(colorA, colorB, 0.5);\n\n\t\t// \u0412\u044B\u0445\u043E\u0434\n\t\tgl_FragColor = color;\n\t}\n";
 
 /***/ }),
 /* 339 */
