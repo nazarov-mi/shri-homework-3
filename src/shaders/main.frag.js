@@ -14,7 +14,7 @@ export default `
 		vec4 color = texture2D(texture, uv);
 
 		// Наложение полос
-		color.rgb += sin(uv.y * u_resolution.y) * 0.05;
+		color.rgb += sin(uv.y * u_resolution.y) * 0.02;
 
 		// Наложение крассного цвета
 		float red = clamp(color.r * 2.0 - 0.5, 0.0, 1.0);
@@ -50,8 +50,8 @@ export default `
 
 	// Функция для сдвига uv координат для пиксилизации
 
-	#define PIXELATE_DELAY 700.0
-	#define PIXELATE_DURATION 30.0
+	#define PIXELATE_DELAY 500.0
+	#define PIXELATE_DURATION 50.0
 
 	vec2 pixelate (vec2 uv) {
 		float time = timer(PIXELATE_DELAY, PIXELATE_DURATION) / PIXELATE_DURATION;

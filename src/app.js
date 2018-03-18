@@ -32,12 +32,14 @@ class App {
 
 		this._calcSizes()
 
+		this._video = this._createVideo()
+		this._videoCanvas = new Canvas2D(this._smWidth, this._smHeight)
+		this._videoPlaying = false
+		this._videoTimeupdate = false
+
 		this._ui = new UI(this._mdWidth, this._mdHeight)
 		this._canvas = new Canvas3D(this._mdWidth, this._mdHeight)
 		this._buffer = this._createBuffer() 
-		this._video = this._createVideo()
-		this._videoCanvasSm = new Canvas2D(this._smWidth, this._smHeight)
-		this._videoCanvasMd = new Canvas2D(this._mdWidth, this._mdHeight)
 		this._stream = new Stream(this._video)
 
 		this._mainTexture = this.createTexture()
@@ -75,10 +77,20 @@ class App {
 	_createVideo () {
 		const video = document.createElement('video')
 
-		video.setAttribute('preload', true)
+		video.setAttribute('preload', 'auto')
 		video.setAttribute('autoplay', true)
 		video.setAttribute('loop', true)
 		video.setAttribute('muted', true)
+
+		video.addEventListener('playing', () => {
+			this._videoPlaying = true
+		}, true)
+
+		video.addEventListener('timeupdate', () => {
+			this._videoTimeupdate = true
+		}, true)
+
+		video.play()
 
 		return video
 	}
@@ -92,7 +104,7 @@ class App {
 		tracker.setStepSize(2)
 		tracker.setEdgesDensity(0.1)
 
-		const track = tracking.track(this._videoCanvasSm.el, tracker)
+		const track = tracking.track(this._videoCanvas.el, tracker)
 
 		tracker.on('track', (event) => {
 			this._facesRects = event.data.map((rect) => {
@@ -142,8 +154,7 @@ class App {
 		this._calcSizes()
 
 		this._canvas.resize(this._mdWidth, this._mdHeight)
-		this._videoCanvasSm.resize(this._smWidth, this._smHeight)
-		this._videoCanvasMd.resize(this._mdWidth, this._mdHeight)
+		this._videoCanvas.resize(this._smWidth, this._smHeight)
 		this._ui.resize(this._mdWidth, this._mdHeight)
 	}
 
@@ -173,8 +184,7 @@ class App {
 
 		if (video.readyState === video.HAVE_ENOUGH_DATA) {
 			try {
-				this._videoCanvasMd.drawImage(video)
-				this._videoCanvasSm.drawImage(video)
+				this._videoCanvas.drawImage(video)
 			} catch (e) {}
 		}
 
@@ -205,7 +215,10 @@ class App {
 
 		shader.bind()
 
-		textureA.setImage(this._videoCanvasMd.el)
+		if (this._videoPlaying && this._videoTimeupdate) {
+			textureA.setImage(this._video)
+		}
+
 		textureB.setImage(this._ui.el)
 
 		shader.bindUniform('1f', 'u_time', this._time)
